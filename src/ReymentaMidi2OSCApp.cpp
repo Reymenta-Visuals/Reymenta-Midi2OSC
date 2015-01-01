@@ -82,17 +82,17 @@ void ReymentaMidi2OSCApp::midiListener(midi::Message msg)
 	switch (msg.status)
 	{
 	case MIDI_CONTROL_CHANGE:
-		controlType = "cc";
+		controlType = "/cc";
 		name = msg.control;
 		newValue = msg.value;
 		break;
 	case MIDI_NOTE_ON:
-		controlType = "on";
+		controlType = "/on";
 		name = msg.pitch;
 		newValue = msg.velocity;
 		break;
 	case MIDI_NOTE_OFF:
-		controlType = "off";
+		controlType = "/off";
 		name = msg.pitch;
 		newValue = msg.velocity;
 		break;
@@ -204,7 +204,12 @@ void ReymentaMidi2OSCApp::draw(){
 			ImGui::Columns(1);
 
 		}
-		if (ImGui::CollapsingHeader("Log", "1", true, true))
+		if (ImGui::CollapsingHeader("Parameters", "1", true, true))
+		{
+			if (ImGui::Button("Save")) { mParameterBag->save(); }
+
+		}
+		if (ImGui::CollapsingHeader("Log", "2", true, true))
 		{
 			static ImGuiTextBuffer log;
 			static int lines = 0;
@@ -217,7 +222,7 @@ void ReymentaMidi2OSCApp::draw(){
 				newLogMsg = false;
 				log.append(mLogMsg.c_str());
 				lines++;
-				if (lines > 20) { log.clear(); lines = 0; }
+				if (lines > 10) { log.clear(); lines = 0; }
 			}
 			ImGui::BeginChild("Log");
 			ImGui::TextUnformatted(log.begin(), log.end());
@@ -234,6 +239,7 @@ void ReymentaMidi2OSCApp::keyDown(KeyEvent event)
 
 void ReymentaMidi2OSCApp::shutDown()
 {
+	// TODO: not called
 	mParameterBag->save();
 	ImGui::Shutdown();
 }

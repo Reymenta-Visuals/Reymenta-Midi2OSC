@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<settings>
+	<AutoLayout value="1"/>
+	<RenderWidth value="1024"/>
+	<RenderHeight value="768"/>
+	<RenderX value="-842150451"/>
+	<RenderY value="-842150451"/>
+	<FboWidth value="640"/>
+	<FboHeight value="480"/>
+	<OSCReceiverPort value="7001"/>
+	<OSCDestinationPort value="7000"/>
+	<OSCDestinationHost value="127.0.0.1"/>
+	<MIDIOpenAllInputPorts value="1"/>
+</settings>
+
