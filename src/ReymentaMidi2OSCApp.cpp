@@ -13,6 +13,7 @@ void ReymentaMidi2OSCApp::setup()
 {
 
 	getWindow()->setTitle("Reymenta midi2osc");
+	getWindow()->connectClose(&ReymentaMidi2OSCApp::shutdown, this);
 	// instanciate the OSC class
 	mOSC = OSC::create(mParameterBag);
 
@@ -28,22 +29,35 @@ void ReymentaMidi2OSCApp::setupMidi()
 {
 	stringstream ss;
 	newLogMsg = true;
-	ss << "setupMidi" << std::endl;
+	ss << "setupMidi: ";
 
-	if (mMidiIn.getNumPorts() > 0)
+	if (mMidiIn0.getNumPorts() > 0)
 	{
-		mMidiIn.listPorts();
-		for (int i = 0; i < mMidiIn.getNumPorts(); i++)
+		mMidiIn0.listPorts();
+		for (int i = 0; i <mMidiIn0.getNumPorts(); i++)
 		{
+
+			midiInput mIn;
+			mIn.portName = mMidiIn0.mPortNames[i];
+			mMidiInputs.push_back(mIn);
 			if (mParameterBag->mMIDIOpenAllInputPorts)
 			{
-				mMidiIn.openPort(i);
-				mMidiIn.midiSignal.connect(boost::bind(&ReymentaMidi2OSCApp::midiListener, this, boost::arg<1>::arg()));
-				ss << "Opening MIDI port " << i << " " << mMidiIn.mPortNames[i] << std::endl;
+				if (i == 1)
+				{
+					mMidiIn1.openPort(i);
+					mMidiIn1.midiSignal.connect(boost::bind(&ReymentaMidi2OSCApp::midiListener, this, boost::arg<1>::arg()));
+				}
+				if (i == 2)				{
+					mMidiIn2.openPort(i);
+					mMidiIn2.midiSignal.connect(boost::bind(&ReymentaMidi2OSCApp::midiListener, this, boost::arg<1>::arg()));
+				}
+				mMidiInputs[i].isConnected = true;
+				ss << "Opening MIDI port " << i << " " << mMidiInputs[i].portName ;
 			}
 			else
 			{
-				ss << "Available MIDI port " << i << " " << mMidiIn.mPortNames[i] << std::endl;
+				mMidiInputs[i].isConnected = false;
+				ss << "Available MIDI port " << i << " " << mMidiIn0.mPortNames[i] ;
 			}
 		}
 	}
@@ -51,23 +65,19 @@ void ReymentaMidi2OSCApp::setupMidi()
 	{
 		ss << "No MIDI Ports found!!!!" << std::endl;
 	}
+	ss << std::endl;
 	mLogMsg = ss.str();
 }
-void ReymentaMidi2OSCApp::midiListener(midi::Message msg){
+void ReymentaMidi2OSCApp::midiListener(midi::Message msg)
+{
 	float normalizedValue;
 	stringstream ss;
+	ss << "midi port: " << msg.port << " ch: " << msg.channel << " status: " << msg.status;
 	string controlType = "unknown";
 
 	newLogMsg = true;
-	ss << "midi port: " << msg.port << " ch: " << msg.channel << " status: " << msg.status;
-	ss << " byteOne: " << msg.byteOne << " byteTwo: " << msg.byteTwo << std::endl;
-	ss << " control: " << msg.control << " value: " << msg.value << std::endl;
-	mLogMsg = ss.str();
-	stringstream ssName;
 	int name;
 	int newValue;
-	string controlName;
-	BYTE b;
 
 	switch (msg.status)
 	{
@@ -75,41 +85,24 @@ void ReymentaMidi2OSCApp::midiListener(midi::Message msg){
 		controlType = "cc";
 		name = msg.control;
 		newValue = msg.value;
-		ssName << name;
-		controlName = ssName.str();
-		normalizedValue = lmap<float>(newValue, 0.0, 127.0, 0.0, 1.0);
-
-		if (normalizedValue != controlValues[name])
-		{
-			controlValues[name] = newValue;
-			//mOSC->sendOSCMidiMessage("/midi", name, newValue, msg.status, msg.channel);
-			mOSC->sendOSCFloatMessage(controlType, name, normalizedValue, msg.channel);
-
-		}
 		break;
 	case MIDI_NOTE_ON:
 		controlType = "on";
-		b = msg.byteOne;
 		name = msg.pitch;
 		newValue = msg.velocity;
-		normalizedValue = lmap<float>(newValue, 0.0, 127.0, 0.0, 1.0);
-		ssName << name;
-		controlName = ssName.str();
-
-		// send to OSC for resolume
-		mOSC->sendOSCIntMessage(controlType, 1, 1, 1);
-
 		break;
 	case MIDI_NOTE_OFF:
 		controlType = "off";
-		b = msg.byteOne;
-
-
+		name = msg.pitch;
+		newValue = msg.velocity;
 		break;
 	default:
 		break;
-
 	}
+	normalizedValue = lmap<float>(newValue, 0.0, 127.0, 0.0, 1.0);
+	ss << " control: " << name << " value: " << newValue << " normalized: " << normalizedValue << std::endl;
+	mLogMsg = ss.str();
+	mOSC->sendOSCFloatMessage(controlType, name, normalizedValue, msg.channel);
 }
 
 void ReymentaMidi2OSCApp::update()
@@ -132,13 +125,6 @@ void ReymentaMidi2OSCApp::draw(){
 	ImGui::Begin("MIDI2OSC", NULL, ImVec2(getWindowWidth(), getWindowHeight()));
 	{
 		// our theme variables
-		
-		static ImVec4 color0 = ImVec4(0.352941, 0.160784, 0.160784, 1);
-		static ImVec4 color1 = ImVec4(0.184314, 0.0392157, 0.0392157, 1);
-		static ImVec4 color2 = ImVec4(0.239216, 0.0745098, 0.054902, 1);
-		static ImVec4 color3 = ImVec4(0.69, 0.69, 0.69, 1);
-		static ImVec4 color4 = ImVec4(0.407843, 0.270588, 0.270588, 1);
-
 		static float WindowPadding[2] = { 25, 10 };
 		static float WindowMinSize[2] = { 160, 80 };
 		static float FramePadding[2] = { 4, 4 };
@@ -158,21 +144,62 @@ void ReymentaMidi2OSCApp::draw(){
 			ImGui::Text("Connect"); ImGui::NextColumn();
 			ImGui::Separator();
 
-			// TODO add btn for mMidiIn.listPorts();
-			for (int i = 0; i < mMidiIn.getNumPorts(); i++)
+			for (int i = 0; i < mMidiInputs.size(); i++)
 			{
-				ImGui::Text(mMidiIn.mPortNames[i].c_str()); ImGui::NextColumn();
+				ImGui::Text(mMidiInputs[i].portName.c_str()); ImGui::NextColumn();
 				char buf[32];
-				sprintf_s(buf, "Connect %d", i);
+				if (mMidiInputs[i].isConnected)
+				{
+					sprintf_s(buf, "Disconnect %d", i);
+				}
+				else
+				{
+					sprintf_s(buf, "Connect %d", i);
+				}
 
 				if (ImGui::Button(buf))
 				{
-					mMidiIn.openPort(i);
-					mMidiIn.midiSignal.connect(boost::bind(&ReymentaMidi2OSCApp::midiListener, this, boost::arg<1>::arg()));
+					stringstream ss;
+					if (mMidiInputs[i].isConnected)
+					{
+						if (i == 0)
+						{
+							mMidiIn0.closePort();
+						}
+						if (i == 1)
+						{
+							mMidiIn1.closePort();
+						}
+						if (i == 2)
+						{
+							mMidiIn2.closePort();
+						}
+						mMidiInputs[i].isConnected = false;
+					}
+					else
+					{
+						if (i == 0)
+						{
+							mMidiIn0.openPort(i);
+							mMidiIn0.midiSignal.connect(boost::bind(&ReymentaMidi2OSCApp::midiListener, this, boost::arg<1>::arg()));
+						}
+						if (i == 1)
+						{
+							mMidiIn1.openPort(i);
+							mMidiIn1.midiSignal.connect(boost::bind(&ReymentaMidi2OSCApp::midiListener, this, boost::arg<1>::arg()));
+						}
+						if (i == 2)
+						{
+							mMidiIn2.openPort(i);
+							mMidiIn2.midiSignal.connect(boost::bind(&ReymentaMidi2OSCApp::midiListener, this, boost::arg<1>::arg()));
+						}
+						mMidiInputs[i].isConnected = true;
+						ss << "Opening MIDI port " << i << " " << mMidiInputs[i].portName << std::endl;
+					}
+					mLogMsg = ss.str();
 				}
 				ImGui::NextColumn();
 				ImGui::Separator();
-
 			}
 			ImGui::Columns(1);
 
@@ -190,6 +217,7 @@ void ReymentaMidi2OSCApp::draw(){
 				newLogMsg = false;
 				log.append(mLogMsg.c_str());
 				lines++;
+				if (lines > 20) { log.clear(); lines = 0; }
 			}
 			ImGui::BeginChild("Log");
 			ImGui::TextUnformatted(log.begin(), log.end());

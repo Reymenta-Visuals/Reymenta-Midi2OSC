@@ -21,6 +21,11 @@ using namespace ci::app;
 using namespace std;
 using namespace Reymenta;
 
+struct midiInput
+{
+	string			portName;
+	bool			isConnected;
+};
 class ReymentaMidi2OSCApp : public AppNative {
 public:
 	void prepareSettings(Settings* settings);
@@ -29,22 +34,22 @@ public:
 	void draw();
 	void shutDown();
 	void keyDown(KeyEvent event);
-	void processMidiMessage(midi::Message* message);
-	void quitProgram();
-
-	map<int, float> controlValues;
-
-	// midi
-	midi::Input mMidiIn;
-	void setupMidi();
-	void midiListener(midi::Message msg);
 
 private:
 	// parameters
 	ParameterBagRef				mParameterBag;
 	// osc
 	OSCRef						mOSC;
-
+	// midi
+	vector<midiInput>			mMidiInputs;
+	void						setupMidi();
+	void						midiListener(midi::Message msg);
+	// midi inputs: couldn't make a vector
+	midi::Input					mMidiIn0;
+	midi::Input					mMidiIn1;
+	midi::Input					mMidiIn2;
+	midi::Input					mMidiIn3;
+	// log
 	string						mLogMsg;
 	bool						newLogMsg;
 };
