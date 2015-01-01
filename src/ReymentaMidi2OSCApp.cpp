@@ -42,6 +42,11 @@ void ReymentaMidi2OSCApp::setupMidi()
 			mMidiInputs.push_back(mIn);
 			if (mParameterBag->mMIDIOpenAllInputPorts)
 			{
+				if (i == 0)
+				{
+					mMidiIn0.openPort(i);
+					mMidiIn0.midiSignal.connect(boost::bind(&ReymentaMidi2OSCApp::midiListener, this, boost::arg<1>::arg()));
+				}
 				if (i == 1)
 				{
 					mMidiIn1.openPort(i);
