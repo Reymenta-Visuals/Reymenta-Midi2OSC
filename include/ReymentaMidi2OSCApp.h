@@ -31,30 +31,19 @@ public:
 	void keyDown(KeyEvent event);
 	void processMidiMessage(midi::Message* message);
 	void quitProgram();
-	void sendOSCMessage(string controlType, int controlName, int controlValue0, int controlValue1 = 0);
-	void sendOSCMidiMessage(string controlType, int controlName, int controlValue0, int controlValue1 = 0, int channel = 0);
 
-	map<int, int> controlValues;
+	map<int, float> controlValues;
 
-	//std::vector<std::string>					destinationHosts;
-	//std::vector<int>							destinationPorts;
 	// midi
 	midi::Input mMidiIn;
 	void setupMidi();
 	void midiListener(midi::Message msg);
 
-
 private:
-	int							nanoPort;
-	string						nanoPortName;
-	std::vector< osc::Sender>	mOSCSenders;
-
-	// Mouse
-	bool						mMouseDown;
-	Vec2i						mMousePos;
-	// update timer
-	double						lastUpdate;
-	int							mUpdateInterval;
+	// parameters
+	ParameterBagRef				mParameterBag;
+	// osc
+	OSCRef						mOSC;
 
 	string						mLogMsg;
 	bool						newLogMsg;
