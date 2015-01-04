@@ -1,11 +1,11 @@
 #include "ReymentaMidi2OSCApp.h"
 
 void ReymentaMidi2OSCApp::prepareSettings(Settings* settings){
-	settings->setFrameRate(1200.0f);
+	settings->setFrameRate(12.0f);
 	// parameters
 	mParameterBag = ParameterBag::create();
 
-	settings->setWindowSize(880, 510);
+	settings->setWindowSize(1024, 510);
 	settings->setWindowPos(Vec2i(0, 30));
 }
 
@@ -34,7 +34,7 @@ void ReymentaMidi2OSCApp::setupMidi()
 	if (mMidiIn0.getNumPorts() > 0)
 	{
 		mMidiIn0.listPorts();
-		for (int i = 0; i <mMidiIn0.getNumPorts(); i++)
+		for (int i = 0; i < mMidiIn0.getNumPorts(); i++)
 		{
 
 			midiInput mIn;
@@ -57,12 +57,12 @@ void ReymentaMidi2OSCApp::setupMidi()
 					mMidiIn2.midiSignal.connect(boost::bind(&ReymentaMidi2OSCApp::midiListener, this, boost::arg<1>::arg()));
 				}
 				mMidiInputs[i].isConnected = true;
-				ss << "Opening MIDI port " << i << " " << mMidiInputs[i].portName ;
+				ss << "Opening MIDI port " << i << " " << mMidiInputs[i].portName;
 			}
 			else
 			{
 				mMidiInputs[i].isConnected = false;
-				ss << "Available MIDI port " << i << " " << mMidiIn0.mPortNames[i] ;
+				ss << "Available MIDI port " << i << " " << mMidiIn0.mPortNames[i];
 			}
 		}
 	}
@@ -112,6 +112,7 @@ void ReymentaMidi2OSCApp::midiListener(midi::Message msg)
 
 void ReymentaMidi2OSCApp::update()
 {
+	mOSC->update();
 	getWindow()->setTitle("(" + toString(floor(getAverageFps())) + " fps) Reymenta midi2osc");
 }
 
@@ -127,7 +128,7 @@ void ReymentaMidi2OSCApp::draw(){
 	ImGui::NewFrame();
 
 	// start a new window
-	ImGui::Begin("MIDI2OSC", NULL, ImVec2(getWindowWidth(), getWindowHeight()));
+	ImGui::Begin("MIDI2OSC", NULL, ImVec2(500, 500));
 	{
 		// our theme variables
 		static float WindowPadding[2] = { 25, 10 };
@@ -209,6 +210,7 @@ void ReymentaMidi2OSCApp::draw(){
 			ImGui::Columns(1);
 
 		}
+
 		if (ImGui::CollapsingHeader("Parameters", "1", true, true))
 		{
 			if (ImGui::Button("Save")) { mParameterBag->save(); }
@@ -227,7 +229,7 @@ void ReymentaMidi2OSCApp::draw(){
 				newLogMsg = false;
 				log.append(mLogMsg.c_str());
 				lines++;
-				if (lines > 10) { log.clear(); lines = 0; }
+				if (lines > 100) { log.clear(); lines = 0; }
 			}
 			ImGui::BeginChild("Log");
 			ImGui::TextUnformatted(log.begin(), log.end());
@@ -235,6 +237,31 @@ void ReymentaMidi2OSCApp::draw(){
 		}
 	}
 	ImGui::End();
+	ImGui::Begin("OSC router", NULL, ImVec2(500, 500));
+	{
+		ImGui::Text("Sending to host %s", mParameterBag->mOSCDestinationHost.c_str());
+		ImGui::SameLine();
+		ImGui::Text(" on port %d", mParameterBag->mOSCDestinationPort);
+		ImGui::Text(" Receiving on port %d", mParameterBag->mOSCReceiverPort);
+		static ImGuiTextBuffer OSClog;
+		static int lines = 0;
+		if (ImGui::Button("Clear")) { OSClog.clear(); lines = 0; }
+		ImGui::SameLine();
+		ImGui::Text("Buffer contents: %d lines, %d bytes", lines, OSClog.size());
+
+		if (mParameterBag->newOSCMsg)
+		{
+			mParameterBag->newOSCMsg = false;
+			OSClog.append(mParameterBag->OSCMsg.c_str());
+			lines++;
+			if (lines > 100) { OSClog.clear(); lines = 0; }
+		}
+		ImGui::BeginChild("OSClog");
+		ImGui::TextUnformatted(OSClog.begin(), OSClog.end());
+		ImGui::EndChild();
+	}
+	ImGui::End();
+
 	ImGui::Render();
 }
 
