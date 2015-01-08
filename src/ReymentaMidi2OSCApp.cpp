@@ -399,6 +399,21 @@ void ReymentaMidi2OSCApp::draw(){
 
 void ReymentaMidi2OSCApp::keyDown(KeyEvent event)
 {
+	switch (event.getCode())
+	{
+
+	case ci::app::KeyEvent::KEY_ESCAPE:
+		mParameterBag->save();
+		ImGui::Shutdown(); 
+		mMidiIn0.closePort();
+		mMidiIn1.closePort();
+		mMidiIn2.closePort();
+		quit();
+		break;
+
+	default:
+		break;
+	}
 }
 
 void ReymentaMidi2OSCApp::shutDown()
@@ -409,4 +424,4 @@ void ReymentaMidi2OSCApp::shutDown()
 }
 
 // This line tells Cinder to actually create the application
-CINDER_APP_BASIC(ReymentaMidi2OSCApp, RendererGl)
+CINDER_APP_NATIVE(ReymentaMidi2OSCApp, RendererGl)
