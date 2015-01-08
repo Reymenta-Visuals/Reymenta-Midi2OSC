@@ -115,6 +115,7 @@ void ReymentaMidi2OSCApp::midiListener(midi::Message msg)
 	normalizedValue = lmap<float>(newValue, 0.0, 127.0, 0.0, 1.0);
 	ss << " control: " << name << " value: " << newValue << " normalized: " << normalizedValue << std::endl;
 	mLogMsg = ss.str();
+	mOSC->updateAndSendOSCFloatMessage(controlType, name, normalizedValue, msg.channel);
 	mOSC->sendOSCFloatMessage(controlType, name, normalizedValue, msg.channel);
 }
 
