@@ -117,7 +117,7 @@ xcopy /y "..\..\..\blocks\Cinder-Spout\lib\SpoutPanel.exe" "$(OutDir)"</Command>
     <ResourceCompile Include="Resources.rc" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\blocks\Cinder-ImGui\lib\imgui\imgui.h" />
+    <ClInclude Include="..\..\..\blocks\Cinder-ImGui\include\imgui.h" />
     <ClInclude Include="..\include\Resources.h" />
     <ClInclude Include="..\..\..\blocks\Cinder-ImGui\src\ImGuiCinder.h" />
     <ClInclude Include="..\..\..\blocks\Cinder-MIDI2\include\MidiConstants.h" />
@@ -158,7 +158,7 @@ xcopy /y "..\..\..\blocks\Cinder-Spout\lib\SpoutPanel.exe" "$(OutDir)"</Command>
     <ClInclude Include="..\include\ReymentaMidi2OSCApp.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\blocks\Cinder-ImGui\lib\imgui\imgui.cpp" />
+    <ClCompile Include="..\..\..\blocks\Cinder-ImGui\src\imgui.cpp" />
     <ClCompile Include="..\src\ReymentaMidi2OSCApp.cpp" />
     <ClCompile Include="..\..\..\blocks\Cinder-ImGui\src\ImGuiCinder.cpp" />
     <ClCompile Include="..\..\..\blocks\Cinder-MIDI2\src\MidiHub.cpp" />

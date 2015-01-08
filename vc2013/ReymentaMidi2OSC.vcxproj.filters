@@ -249,7 +249,7 @@
     <ClCompile Include="..\..\..\blocks\OSC\src\ip\win32\UdpSocket.cpp">
       <Filter>Blocks\OSC\src\ip\win32</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\blocks\Cinder-ImGui\lib\imgui\imgui.cpp">
+    <ClCompile Include="..\..\..\blocks\Cinder-ImGui\src\imgui.cpp">
       <Filter>Blocks\imGui\src</Filter>
     </ClCompile>
   </ItemGroup>
@@ -260,7 +260,7 @@
     <ClInclude Include="..\include\ReymentaMidi2OSCApp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\blocks\Cinder-ImGui\lib\imgui\imgui.h">
+    <ClInclude Include="..\..\..\blocks\Cinder-ImGui\include\imgui.h">
       <Filter>Blocks\imGui\src</Filter>
     </ClInclude>
   </ItemGroup>

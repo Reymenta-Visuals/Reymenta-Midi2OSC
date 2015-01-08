@@ -4,9 +4,16 @@ void ReymentaMidi2OSCApp::prepareSettings(Settings* settings){
 	settings->setFrameRate(12.0f);
 	// parameters
 	mParameterBag = ParameterBag::create();
+	// utils
+	mBatchass = Batchass::create(mParameterBag);
+	// if AutoLayout, try to position the window on the 2nd screen
+	if (mParameterBag->mAutoLayout)
+	{
+		mBatchass->getWindowsResolution();
+	}
 
-	settings->setWindowSize(1024, 510);
-	settings->setWindowPos(Vec2i(0, 30));
+	settings->setWindowSize(mParameterBag->mRenderWidth, mParameterBag->mRenderHeight);
+	settings->setWindowPos(Vec2i(mParameterBag->mRenderX, mParameterBag->mRenderY));
 }
 
 void ReymentaMidi2OSCApp::setup()
@@ -16,6 +23,7 @@ void ReymentaMidi2OSCApp::setup()
 	getWindow()->connectClose(&ReymentaMidi2OSCApp::shutdown, this);
 	// instanciate the OSC class
 	mOSC = OSC::create(mParameterBag);
+	mBatchass->createWarpFbos();
 
 	newLogMsg = false;
 
@@ -125,6 +133,7 @@ void ReymentaMidi2OSCApp::draw(){
 	//imgui
 	static float f = 0.0f;
 
+	static bool showTest = false, showTheme = false, showAudio = true, showShaders = true, showOSC = true, showFps = true;
 	ImGui::NewFrame();
 
 	// start a new window
@@ -213,6 +222,18 @@ void ReymentaMidi2OSCApp::draw(){
 
 		if (ImGui::CollapsingHeader("Parameters", "1", true, true))
 		{
+			// Checkbox
+			ImGui::Checkbox("Audio", &showAudio);
+			ImGui::SameLine();
+			ImGui::Checkbox("Shada", &showShaders);
+			ImGui::SameLine();
+			ImGui::Checkbox("Test", &showTest);
+			ImGui::SameLine();
+			ImGui::Checkbox("FPS", &showFps);
+			ImGui::SameLine();
+			ImGui::Checkbox("OSC", &showOSC);
+			ImGui::SameLine();
+			ImGui::Checkbox("Editor", &showTheme);
 			if (ImGui::Button("Save")) { mParameterBag->save(); }
 
 		}
@@ -237,30 +258,145 @@ void ReymentaMidi2OSCApp::draw(){
 		}
 	}
 	ImGui::End();
-	ImGui::Begin("OSC router", NULL, ImVec2(500, 500));
-	{
-		ImGui::Text("Sending to host %s", mParameterBag->mOSCDestinationHost.c_str());
-		ImGui::SameLine();
-		ImGui::Text(" on port %d", mParameterBag->mOSCDestinationPort);
-		ImGui::Text(" Receiving on port %d", mParameterBag->mOSCReceiverPort);
-		static ImGuiTextBuffer OSClog;
-		static int lines = 0;
-		if (ImGui::Button("Clear")) { OSClog.clear(); lines = 0; }
-		ImGui::SameLine();
-		ImGui::Text("Buffer contents: %d lines, %d bytes", lines, OSClog.size());
+	if (showTest) ImGui::ShowTestWindow();
 
-		if (mParameterBag->newOSCMsg)
+	if (showOSC)
+	{
+		ImGui::Begin("OSC router", NULL, ImVec2(500, 500));
 		{
-			mParameterBag->newOSCMsg = false;
-			OSClog.append(mParameterBag->OSCMsg.c_str());
-			lines++;
-			if (lines > 100) { OSClog.clear(); lines = 0; }
+			ImGui::Text("Sending to host %s", mParameterBag->mOSCDestinationHost.c_str());
+			ImGui::SameLine();
+			ImGui::Text(" on port %d", mParameterBag->mOSCDestinationPort);
+			ImGui::Text("Sending to 2nd host %s", mParameterBag->mOSCDestinationHost2.c_str());
+			ImGui::SameLine();
+			ImGui::Text(" on port %d", mParameterBag->mOSCDestinationPort2);
+			ImGui::Text(" Receiving on port %d", mParameterBag->mOSCReceiverPort);
+
+			static char str0[128] = "/live/play";
+			static int i0 = 0;
+			static float f0 = 0.0f;
+			ImGui::InputText("address", str0, IM_ARRAYSIZE(str0));
+			ImGui::InputInt("track", &i0);
+			ImGui::InputFloat("clip", &f0, 0.01f, 1.0f);
+			if (ImGui::Button("Send")) { mOSC->sendOSCIntMessage(str0,i0); }
+
+			static ImGuiTextBuffer OSClog;
+			static int lines = 0;
+			if (ImGui::Button("Clear")) { OSClog.clear(); lines = 0; }
+			ImGui::SameLine();
+			ImGui::Text("Buffer contents: %d lines, %d bytes", lines, OSClog.size());
+
+			if (mParameterBag->newOSCMsg)
+			{
+				mParameterBag->newOSCMsg = false;
+				OSClog.append(mParameterBag->OSCMsg.c_str());
+				lines++;
+				if (lines > 10) { OSClog.clear(); lines = 0; }
+			}
+			ImGui::BeginChild("OSClog");
+			ImGui::TextUnformatted(OSClog.begin(), OSClog.end());
+			ImGui::EndChild();
 		}
-		ImGui::BeginChild("OSClog");
-		ImGui::TextUnformatted(OSClog.begin(), OSClog.end());
+	}
+	ImGui::End();
+	ImGui::Begin("UI", NULL, ImVec2(500, 500));
+	{
+		// foreground color
+		static float color[4] = { mParameterBag->controlValues[1], mParameterBag->controlValues[2], mParameterBag->controlValues[3], mParameterBag->controlValues[4] };
+		ImGui::ColorEdit4("f", color);
+		mParameterBag->controlValues[1] = color[0];
+		mParameterBag->controlValues[2] = color[1];
+		mParameterBag->controlValues[3] = color[2];
+		mParameterBag->controlValues[4] = color[3];
+		//ImGui::SameLine();
+		//ImGui::TextColored(ImVec4(mParameterBag->controlValues[1], mParameterBag->controlValues[2], mParameterBag->controlValues[3], mParameterBag->controlValues[4]), "fg color");
+
+		// background color
+		static float backcolor[4] = { mParameterBag->controlValues[5], mParameterBag->controlValues[6], mParameterBag->controlValues[7], mParameterBag->controlValues[8] };
+		ImGui::ColorEdit4("g", backcolor);
+		mParameterBag->controlValues[5] = backcolor[0];
+		mParameterBag->controlValues[6] = backcolor[1];
+		mParameterBag->controlValues[7] = backcolor[2];
+		mParameterBag->controlValues[8] = backcolor[3];
+		//ImGui::SameLine();
+		//ImGui::TextColored(ImVec4(mParameterBag->controlValues[5], mParameterBag->controlValues[6], mParameterBag->controlValues[7], mParameterBag->controlValues[8]), "bg color");
+	//	mParameterBag->selectedWarp = iargs[0];
+	
+	//	//select input
+	//	mParameterBag->mWarpFbos[mParameterBag->selectedWarp].textureIndex = iargs[0] - 30;
+	//	// activate
+	//	mParameterBag->mWarpFbos[mParameterBag->selectedWarp].active = !mParameterBag->mWarpFbos[mParameterBag->selectedWarp].active;
+		ImGui::BeginChild("Warps routing", ImVec2(0, 300), true);
+		ImGui::Text("With border");
+		ImGui::Columns(4);
+		ImGui::Text("ID"); ImGui::NextColumn();
+		ImGui::Text("texIndex"); ImGui::NextColumn();
+		ImGui::Text("texMode"); ImGui::NextColumn();
+		ImGui::Text("active"); ImGui::NextColumn();
+		ImGui::Separator();
+		for (int i = 0; i < mParameterBag->MAX; i++)
+		{
+			ImGui::Text("%d", i); ImGui::NextColumn();
+			ImGui::Text("%d", mParameterBag->mWarpFbos[i].textureIndex); ImGui::NextColumn();
+			ImGui::Text("%d", mParameterBag->mWarpFbos[i].textureMode); ImGui::NextColumn();
+			ImGui::Text("%d", mParameterBag->mWarpFbos[i].active); ImGui::NextColumn();
+
+		}
+		ImGui::Columns(1);
 		ImGui::EndChild();
 	}
 	ImGui::End();
+	// audio window
+	if (showAudio)
+	{
+
+		ImGui::Begin("Audio", NULL, ImVec2(200, 100));
+		{
+			ImGui::Checkbox("Playing", &mParameterBag->mIsPlaying);
+			ImGui::SameLine();
+			ImGui::Text("Beat %d", mParameterBag->mBeat);
+			ImGui::SameLine();
+			ImGui::Text("Tempo %.2f", mParameterBag->mTempo);
+
+			static ImVector<float> values; if (values.empty()) { values.resize(40); memset(&values.front(), 0, values.size()*sizeof(float)); }
+			static int values_offset = 0;
+			// audio maxVolume
+			static float refresh_time = -1.0f;
+			if (ImGui::GetTime() > refresh_time + 1.0f / 20.0f)
+			{
+				refresh_time = ImGui::GetTime();
+				values[values_offset] = mParameterBag->maxVolume;
+				values_offset = (values_offset + 1) % values.size();
+			}
+			ImGui::PlotLines("Volume", &values.front(), (int)values.size(), values_offset, toString(mBatchass->formatFloat(mParameterBag->maxVolume)).c_str(), 0.0f, 1.0f, ImVec2(0, 70));
+
+			/*for (int a = 0; a < MAX; a++)
+			{
+				if (mOSC->tracks[a] != "default.glsl") ImGui::Button(mOSC->tracks[a].c_str());
+			}*/
+
+		}
+		ImGui::End();
+	}
+	// fps window
+	if (showFps)
+	{
+		ImGui::Begin("Fps", NULL, ImVec2(200, 100));
+		{
+			static ImVector<float> values; if (values.empty()) { values.resize(100); memset(&values.front(), 0, values.size()*sizeof(float)); }
+			static int values_offset = 0;
+			static float refresh_time = -1.0f;
+			if (ImGui::GetTime() > refresh_time + 1.0f / 6.0f)
+			{
+				refresh_time = ImGui::GetTime();
+				values[values_offset] = getAverageFps();
+				values_offset = (values_offset + 1) % values.size();
+			}
+
+			ImGui::PlotLines("FPS", &values.front(), (int)values.size(), values_offset, toString(floor(getAverageFps())).c_str(), 0.0f, 300.0f, ImVec2(0, 70));
+		}
+		ImGui::End();
+	}
 
 	ImGui::Render();
 }

@@ -15,11 +15,15 @@
 #include "ParameterBag.h"
 // OSC
 #include "OSCWrapper.h"
+// Utils
+#include "Batchass.h"
 
 using namespace ci;
 using namespace ci::app;
 using namespace std;
 using namespace Reymenta;
+
+#define IM_ARRAYSIZE(_ARR)			((int)(sizeof(_ARR)/sizeof(*_ARR)))
 
 struct midiInput
 {
@@ -40,6 +44,8 @@ private:
 	ParameterBagRef				mParameterBag;
 	// osc
 	OSCRef						mOSC;
+	// utils
+	BatchassRef					mBatchass;
 	// midi
 	vector<midiInput>			mMidiInputs;
 	void						setupMidi();
@@ -52,4 +58,5 @@ private:
 	// log
 	string						mLogMsg;
 	bool						newLogMsg;
+
 };
