@@ -23,7 +23,7 @@ void ReymentaMidi2OSCApp::setup()
 	getWindow()->connectClose(&ReymentaMidi2OSCApp::shutdown, this);
 	// instanciate the OSC class
 	mOSC = OSC::create(mParameterBag);
-	mBatchass->createWarpFbos();
+	mBatchass->setup();
 
 	newLogMsg = false;
 
@@ -320,14 +320,9 @@ void ReymentaMidi2OSCApp::draw(){
 		mParameterBag->controlValues[8] = backcolor[3];
 		//ImGui::SameLine();
 		//ImGui::TextColored(ImVec4(mParameterBag->controlValues[5], mParameterBag->controlValues[6], mParameterBag->controlValues[7], mParameterBag->controlValues[8]), "bg color");
-	//	mParameterBag->selectedWarp = iargs[0];
-	
-	//	//select input
-	//	mParameterBag->mWarpFbos[mParameterBag->selectedWarp].textureIndex = iargs[0] - 30;
-	//	// activate
-	//	mParameterBag->mWarpFbos[mParameterBag->selectedWarp].active = !mParameterBag->mWarpFbos[mParameterBag->selectedWarp].active;
+
 		ImGui::BeginChild("Warps routing", ImVec2(0, 300), true);
-		ImGui::Text("With border");
+		ImGui::Text("Selected warp: %d", mParameterBag->selectedWarp);
 		ImGui::Columns(4);
 		ImGui::Text("ID"); ImGui::NextColumn();
 		ImGui::Text("texIndex"); ImGui::NextColumn();

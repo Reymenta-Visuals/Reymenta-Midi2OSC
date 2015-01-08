@@ -1,0 +1,3 @@
+[17:32:54] Textures constructor
+[17:35:20] Textures destructor
+[17:35:20] quit

@@ -1,0 +1,5 @@
+[17:32:50] Shaders constructor
+[17:32:53] C:\Users\b.lane\Documents\Cinder\Cinder0.8.6\Bruce\Reymenta-Midi2OSC\assets\0.glsl loaded and compiled, does not exist:C:\Users\b.lane\Documents\Cinder\Cinder0.8.6\Bruce\Reymenta-Midi2OSC\assets\0.glsl
+[17:32:53] C:\Users\b.lane\Documents\Cinder\Cinder0.8.6\Bruce\Reymenta-Midi2OSC\assets\1.glsl loaded and compiled, does not exist:C:\Users\b.lane\Documents\Cinder\Cinder0.8.6\Bruce\Reymenta-Midi2OSC\assets\1.glsl
+[17:32:53] C:\Users\b.lane\Documents\Cinder\Cinder0.8.6\Bruce\Reymenta-Midi2OSC\assets\2.glsl loaded and compiled, does not exist:C:\Users\b.lane\Documents\Cinder\Cinder0.8.6\Bruce\Reymenta-Midi2OSC\assets\2.glsl
+[17:35:20] Shaders destructor
