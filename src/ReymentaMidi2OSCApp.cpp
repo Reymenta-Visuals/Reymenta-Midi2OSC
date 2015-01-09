@@ -263,7 +263,7 @@ void ReymentaMidi2OSCApp::draw(){
 
 	if (showOSC)
 	{
-		ImGui::Begin("OSC router", NULL, ImVec2(500, 500));
+		ImGui::Begin("OSC router", NULL, ImVec2(300, 300));
 		{
 			ImGui::Text("Sending to host %s", mParameterBag->mOSCDestinationHost.c_str());
 			ImGui::SameLine();
@@ -279,7 +279,7 @@ void ReymentaMidi2OSCApp::draw(){
 			ImGui::InputText("address", str0, IM_ARRAYSIZE(str0));
 			ImGui::InputInt("track", &i0);
 			ImGui::InputFloat("clip", &f0, 0.01f, 1.0f);
-			if (ImGui::Button("Send")) { mOSC->sendOSCIntMessage(str0,i0); }
+			if (ImGui::Button("Send")) { mOSC->sendOSCIntMessage(str0, i0); }
 
 			static ImGuiTextBuffer OSClog;
 			static int lines = 0;
@@ -300,7 +300,7 @@ void ReymentaMidi2OSCApp::draw(){
 		}
 	}
 	ImGui::End();
-	ImGui::Begin("UI", NULL, ImVec2(500, 500));
+	ImGui::Begin("UI", NULL, ImVec2(300, 300));
 	{
 		// foreground color
 		static float color[4] = { mParameterBag->controlValues[1], mParameterBag->controlValues[2], mParameterBag->controlValues[3], mParameterBag->controlValues[4] };
@@ -364,7 +364,7 @@ void ReymentaMidi2OSCApp::draw(){
 				values[values_offset] = mParameterBag->maxVolume;
 				values_offset = (values_offset + 1) % values.size();
 			}
-			ImGui::PlotLines("Volume", &values.front(), (int)values.size(), values_offset, toString(mBatchass->formatFloat(mParameterBag->maxVolume)).c_str(), 0.0f, 1.0f, ImVec2(0, 70));
+			ImGui::PlotLines("Volume", &values.front(), (int)values.size(), values_offset, toString(mBatchass->formatFloat(mParameterBag->maxVolume)).c_str(), 0.0f, 1.0f, ImVec2(0, 30));
 
 			/*for (int a = 0; a < MAX; a++)
 			{
@@ -377,7 +377,7 @@ void ReymentaMidi2OSCApp::draw(){
 	// fps window
 	if (showFps)
 	{
-		ImGui::Begin("Fps", NULL, ImVec2(200, 100));
+		ImGui::Begin("Fps", NULL, ImVec2(100, 100));
 		{
 			static ImVector<float> values; if (values.empty()) { values.resize(100); memset(&values.front(), 0, values.size()*sizeof(float)); }
 			static int values_offset = 0;
@@ -389,7 +389,7 @@ void ReymentaMidi2OSCApp::draw(){
 				values_offset = (values_offset + 1) % values.size();
 			}
 
-			ImGui::PlotLines("FPS", &values.front(), (int)values.size(), values_offset, toString(floor(getAverageFps())).c_str(), 0.0f, 300.0f, ImVec2(0, 70));
+			ImGui::PlotLines("FPS", &values.front(), (int)values.size(), values_offset, toString(floor(getAverageFps())).c_str(), 0.0f, 300.0f, ImVec2(0, 30));
 		}
 		ImGui::End();
 	}
