@@ -20,7 +20,10 @@ void ReymentaMidi2OSCApp::setup()
 {
 
 	getWindow()->setTitle("Reymenta midi2osc");
-	getWindow()->connectClose(&ReymentaMidi2OSCApp::shutdown, this);
+	//getWindow()->connectClose(&ReymentaMidi2OSCApp::shutdown, this);
+	ci::app::App::get()->getSignalShutdown().connect([&]() {
+		ReymentaMidi2OSCApp::shutdown();
+	});
 	// instanciate the OSC class
 	mOSC = OSC::create(mParameterBag);
 	mBatchass->setup();
