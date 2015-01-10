@@ -9,7 +9,7 @@
 	<FboHeight value="480"/>
 	<OSCReceiverPort value="9001"/>
 	<OSCDestinationPort value="7000"/>
-	<OSCDestinationHost value="127.0.0.1"/>
+	<OSCDestinationHost value="192.168.0.18"/>
 	<OSCDestinationPort2 value="9000"/>
 	<OSCDestinationHost2 value="127.0.0.1"/>
 	<MIDIOpenAllInputPorts value="1"/>

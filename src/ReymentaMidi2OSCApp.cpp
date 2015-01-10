@@ -254,7 +254,7 @@ void ReymentaMidi2OSCApp::draw(){
 				newLogMsg = false;
 				log.append(mLogMsg.c_str());
 				lines++;
-				if (lines > 100) { log.clear(); lines = 0; }
+				if (lines > 5) { log.clear(); lines = 0; }
 			}
 			ImGui::BeginChild("Log");
 			ImGui::TextUnformatted(log.begin(), log.end());
@@ -295,7 +295,7 @@ void ReymentaMidi2OSCApp::draw(){
 				mParameterBag->newOSCMsg = false;
 				OSClog.append(mParameterBag->OSCMsg.c_str());
 				lines++;
-				if (lines > 10) { OSClog.clear(); lines = 0; }
+				if (lines > 5) { OSClog.clear(); lines = 0; }
 			}
 			ImGui::BeginChild("OSClog");
 			ImGui::TextUnformatted(OSClog.begin(), OSClog.end());
