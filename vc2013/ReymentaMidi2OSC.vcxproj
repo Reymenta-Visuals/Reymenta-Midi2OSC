@@ -50,7 +50,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\include;..\..\..\\include;..\..\..\\boost;..\..\..\blocks\Cinder-ImGui\lib\imgui;..\..\..\blocks\Cinder-ImGui\include;..\..\..\blocks\Cinder-ImGui\src;..\..\..\blocks\Cinder-MIDI2\include;..\..\..\blocks\Cinder-MIDI2\lib;..\..\..\blocks\Cinder-MIDI2\src;..\..\..\blocks\Cinder-Reymenta\include;..\..\..\blocks\Cinder-Reymenta\src;..\..\..\blocks\Cinder-Spout\include;..\..\..\blocks\OSC\src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;..\..\..\\include;..\..\..\\boost;..\..\..\blocks\Cinder-WebSocketPP\src;..\..\..\blocks\Cinder-ImGui\lib\imgui;..\..\..\blocks\Cinder-ImGui\include;..\..\..\blocks\Cinder-ImGui\src;..\..\..\blocks\Cinder-MIDI2\include;..\..\..\blocks\Cinder-MIDI2\lib;..\..\..\blocks\Cinder-MIDI2\src;..\..\..\blocks\Cinder-Reymenta\include;..\..\..\blocks\Cinder-Reymenta\src;..\..\..\blocks\Cinder-Spout\include;..\..\..\blocks\OSC\src</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;NOMINMAX;_WIN32_WINNT=0x0502;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -64,7 +64,7 @@
       <AdditionalIncludeDirectories>"..\..\..\\include";..\include</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>cinder-$(PlatformToolset)_d.lib;%(AdditionalDependencies);..\..\..\blocks\Cinder-Spout\lib\Spout.lib</AdditionalDependencies>
+      <AdditionalDependencies>cinder-$(PlatformToolset)_d.lib;%(AdditionalDependencies);..\..\..\blocks\Cinder-Spout\lib\Spout.lib;..\..\..\blocks\Cinder-WebSocketPP\lib\msw\libboost_random-vc120-mt-sgd-1_55.lib;..\..\..\blocks\Cinder-WebSocketPP\lib\msw\libboost_regex-vc120-mt-sgd-1_55.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>"..\..\..\\lib\msw\$(PlatformTarget)"</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
@@ -81,7 +81,7 @@ xcopy /y "..\..\..\blocks\Cinder-Spout\lib\SpoutPanel.exe" "$(OutDir)"</Command>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\include;..\..\..\\include;..\..\..\\boost;..\..\..\blocks\Cinder-ImGui\lib\imgui;..\..\..\blocks\Cinder-ImGui\include;..\..\..\blocks\Cinder-ImGui\src;..\..\..\blocks\Cinder-MIDI2\include;..\..\..\blocks\Cinder-MIDI2\lib;..\..\..\blocks\Cinder-MIDI2\src;..\..\..\blocks\Cinder-Reymenta\include;..\..\..\blocks\Cinder-Reymenta\src;..\..\..\blocks\Cinder-Spout\include;..\..\..\blocks\OSC\src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;..\..\..\\include;..\..\..\\boost;..\..\..\blocks\Cinder-WebSocketPP\src;..\..\..\blocks\Cinder-ImGui\lib\imgui;..\..\..\blocks\Cinder-ImGui\include;..\..\..\blocks\Cinder-ImGui\src;..\..\..\blocks\Cinder-MIDI2\include;..\..\..\blocks\Cinder-MIDI2\lib;..\..\..\blocks\Cinder-MIDI2\src;..\..\..\blocks\Cinder-Reymenta\include;..\..\..\blocks\Cinder-Reymenta\src;..\..\..\blocks\Cinder-Spout\include;..\..\..\blocks\OSC\src</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;NOMINMAX;_WIN32_WINNT=0x0502;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PrecompiledHeader />
@@ -96,7 +96,7 @@ xcopy /y "..\..\..\blocks\Cinder-Spout\lib\SpoutPanel.exe" "$(OutDir)"</Command>
       <AdditionalIncludeDirectories>"..\..\..\\include";..\include</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>cinder-$(PlatformToolset).lib;%(AdditionalDependencies);..\..\..\blocks\Cinder-Spout\lib\Spout.lib</AdditionalDependencies>
+      <AdditionalDependencies>cinder-$(PlatformToolset).lib;%(AdditionalDependencies);..\..\..\blocks\Cinder-Spout\lib\Spout.lib;..\..\..\blocks\Cinder-WebSocketPP\lib\msw\libboost_random-vc120-mt-s-1_55.lib;..\..\..\blocks\Cinder-WebSocketPP\lib\msw\libboost_regex-vc120-mt-s-1_55.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>"..\..\..\\lib\msw\$(PlatformTarget)"</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <GenerateMapFile>true</GenerateMapFile>
@@ -117,6 +117,91 @@ xcopy /y "..\..\..\blocks\Cinder-Spout\lib\SpoutPanel.exe" "$(OutDir)"</Command>
     <ResourceCompile Include="Resources.rc" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\blocks\Cinder-Reymenta\include\WebSocketsWrapper.h" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\WebSocketClient.h" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\WebSocketConnection.h" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\base64\base64.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\client.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\close.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\common\chrono.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\common\connection_hdl.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\common\cpp11.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\common\functional.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\common\md5.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\common\memory.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\common\network.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\common\platforms.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\common\random.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\common\regex.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\common\stdint.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\common\system_error.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\common\thread.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\concurrency\basic.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\concurrency\none.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\config\asio.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\config\asio_client.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\config\asio_no_tls.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\config\asio_no_tls_client.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\config\boost_config.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\config\core.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\config\core_client.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\config\debug.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\config\debug_asio.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\config\debug_asio_no_tls.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\connection.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\connection_base.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\endpoint.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\endpoint_base.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\error.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\error_container.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\extensions\extension.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\extensions\permessage_deflate\disabled.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\extensions\permessage_deflate\enabled.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\frame.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\http\constants.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\http\impl\parser.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\http\impl\request.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\http\impl\response.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\http\parser.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\http\request.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\http\response.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\impl\connection_impl.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\impl\endpoint_impl.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\impl\utilities_impl.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\logger\basic.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\logger\levels.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\logger\stub.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\message_buffer\alloc.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\message_buffer\message.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\message_buffer\pool.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\processors\base.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\processors\hybi00.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\processors\hybi07.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\processors\hybi08.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\processors\hybi13.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\processors\processor.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\random\none.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\random\random_device.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\roles\client_endpoint.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\roles\server_endpoint.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\server.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\sha1\sha1.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\transport\asio\base.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\transport\asio\connection.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\transport\asio\endpoint.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\transport\asio\security\base.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\transport\asio\security\none.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\transport\asio\security\tls.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\transport\base\connection.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\transport\base\endpoint.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\transport\iostream\base.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\transport\iostream\connection.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\transport\iostream\endpoint.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\uri.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\utf8_validator.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\utilities.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\websocketpp\version.hpp" />
+    <ClInclude Include="..\..\..\blocks\Cinder-WebSocketPP\src\WebSocketServer.h" />
     <ClInclude Include="..\..\..\blocks\Cinder-ImGui\include\imgui.h" />
     <ClInclude Include="..\include\Resources.h" />
     <ClInclude Include="..\..\..\blocks\Cinder-ImGui\src\ImGuiCinder.h" />
@@ -158,6 +243,10 @@ xcopy /y "..\..\..\blocks\Cinder-Spout\lib\SpoutPanel.exe" "$(OutDir)"</Command>
     <ClInclude Include="..\include\ReymentaMidi2OSCApp.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\blocks\Cinder-Reymenta\src\WebSocketsWrapper.cpp" />
+    <ClCompile Include="..\..\..\blocks\Cinder-WebSocketPP\src\WebSocketClient.cpp" />
+    <ClCompile Include="..\..\..\blocks\Cinder-WebSocketPP\src\WebSocketConnection.cpp" />
+    <ClCompile Include="..\..\..\blocks\Cinder-WebSocketPP\src\WebSocketServer.cpp" />
     <ClCompile Include="..\..\..\blocks\Cinder-ImGui\src\imgui.cpp" />
     <ClCompile Include="..\src\ReymentaMidi2OSCApp.cpp" />
     <ClCompile Include="..\..\..\blocks\Cinder-ImGui\src\ImGuiCinder.cpp" />

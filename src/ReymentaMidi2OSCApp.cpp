@@ -26,6 +26,8 @@ void ReymentaMidi2OSCApp::setup()
 	});
 	// instanciate the OSC class
 	mOSC = OSC::create(mParameterBag);
+	// instanciate the WebSockets class
+	mWebSockets = WebSockets::create(mParameterBag);
 	mBatchass->setup();
 
 	newLogMsg = false;
@@ -124,6 +126,7 @@ void ReymentaMidi2OSCApp::midiListener(midi::Message msg)
 
 void ReymentaMidi2OSCApp::update()
 {
+	mWebSockets->update();
 	mOSC->update();
 	getWindow()->setTitle("(" + toString(floor(getAverageFps())) + " fps) Reymenta midi2osc");
 }

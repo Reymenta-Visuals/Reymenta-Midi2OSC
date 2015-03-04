@@ -15,6 +15,8 @@
 #include "ParameterBag.h"
 // OSC
 #include "OSCWrapper.h"
+// WebSockets
+#include "WebSocketsWrapper.h"
 // Utils
 #include "Batchass.h"
 
@@ -44,6 +46,8 @@ private:
 	ParameterBagRef				mParameterBag;
 	// osc
 	OSCRef						mOSC;
+	// WebSockets
+	WebSocketsRef				mWebSockets;
 	// utils
 	BatchassRef					mBatchass;
 	// midi
